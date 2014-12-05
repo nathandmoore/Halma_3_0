@@ -186,10 +186,10 @@ def determineJump(pieces,pieceToMove,move,destCell,enemy):
 
             # prevent L-shaped jumps: if x-displacement or y-displacement are
             # 2x the other, then that is an L shaped move
-            if (( (jumpMove.x - pieces[pieceToMove].x) ==
-                (2 * (pieces[pieceToMove].y - jumpMove.y)) ) or
-                ( (pieces[pieceToMove].y - jumpMove.y) ==
-                 (2 * (jumpMove.x - pieces[pieceToMove].x)) )):
+            if (( abs(jumpMove.x - pieces[pieceToMove].x) ==
+                abs(2 * (pieces[pieceToMove].y - jumpMove.y)) ) or
+                ( abs(pieces[pieceToMove].y - jumpMove.y) ==
+                 abs(2 * (jumpMove.x - pieces[pieceToMove].x)) )):
 
                 newMove["destx"] = pieces[pieceToMove].x
                 newMove["desty"] = pieces[pieceToMove].y

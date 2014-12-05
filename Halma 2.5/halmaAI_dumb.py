@@ -183,10 +183,10 @@ def determineJump(pieces,pieceToMove,move,destCell):
             # prevent L-shaped jumps: if x-displacement or y-displacement are
             # 2x the other, then that is an L shaped move: (up 2, over 1) or
             # (up 1, over 2)
-            if (( (jumpMove.x - pieces[pieceToMove].x) ==
-                (2 * (pieces[pieceToMove].y - jumpMove.y)) ) or
-                ( (pieces[pieceToMove].y - jumpMove.y) ==
-                 (2 * (jumpMove.x - pieces[pieceToMove].x)) )):
+            if (( abs(jumpMove.x - pieces[pieceToMove].x) ==
+                abs(2 * (pieces[pieceToMove].y - jumpMove.y)) ) or
+                ( abs(pieces[pieceToMove].y - jumpMove.y) ==
+                 abs(2 * (jumpMove.x - pieces[pieceToMove].x)) )):
 
                 newMove["destx"] = pieces[pieceToMove].x
                 newMove["desty"] = pieces[pieceToMove].y
@@ -450,8 +450,12 @@ def generateTestJSON(testNum):
 # print ">> " + str(testCheckIfArrived())
 #------------------------------------------------------------------------------
 # GET DATA
-postData = cgi.FieldStorage()
-gameData = ast.literal_eval(postData.getvalue('board'))
+
+stringJSON = """{"board":{"pieces":[{"y":0,"x":0,"team":1},{"y":2,"x":2,"team":1},{"y":3,"x":2,"team":1},{"y":3,"x":1,"team":1},{"y":1,"x":1,"team":1},{"y":2,"x":3,"team":1},{"y":3,"x":3,"team":1},{"y":4,"x":3,"team":1},{"y":2,"x":4,"team":1},{"y":1,"x":3,"team":1},{"y":3,"x":4,"team":1},{"y":4,"x":4,"team":1}],"destinations":[{"y":0,"x":0,"team":-1},{"y":1,"x":0,"team":-1},{"y":2,"x":0,"team":-1},{"y":0,"x":1,"team":-1},{"y":1,"x":1,"team":-1},{"y":2,"x":1,"team":-1},{"y":0,"x":2,"team":-1},{"y":1,"x":2,"team":-1},{"y":2,"x":2,"team":-1}],"boardSize":18,"enemy":[{"y":0,"x":16,"team":0},{"y":1,"x":17,"team":0},{"y":4,"x":12,"team":0},{"y":5,"x":12,"team":0},{"y":1,"x":16,"team":0},{"y":2,"x":16,"team":0},{"y":0,"x":15,"team":0},{"y":1,"x":15,"team":0},{"y":2,"x":15,"team":0},{"y":3,"x":14,"team":0},{"y":3,"x":15,"team":0},{"y":6,"x":13,"team":0}],"currPiece":1,"moveCount":30}}"""
+stringJSON = json.loads(stringJSON)
+gameData = stringJSON["board"]
+# postData = cgi.FieldStorage()
+# gameData = ast.literal_eval(postData.getvalue('board'))
 
 # set pieces as cells
 pieces = gameData["pieces"]
