@@ -111,7 +111,7 @@ def getMove(pieces,destRegion,enemy,pieceToMove):
     #      if yet another piece: skip move
     #      if not: move to that second location (jump)
     #  if no: move to location
-    nextMove = determineJump(pieces,pieceToMove,directMove,destCell)
+    nextMove = determineJump(pieces,pieceToMove,directMove,destCell,enemy)
 
     return nextMove
 
