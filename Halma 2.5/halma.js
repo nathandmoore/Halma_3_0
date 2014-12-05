@@ -472,7 +472,7 @@ function makeMove() {
          if(!isCellOnTeam(currPieceLoc, gTeamList[currentTeam].teamPieces)) {
              //update bad move count
              alert("BAD MOVE Request: Requested Piece to Move not Valid");
-             return;
+             break;
          }
     
             var movePieceLocs = move.to;
@@ -494,7 +494,7 @@ function makeMove() {
            if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
                alert("Invalid Move request from AI " +
                       gTeamList[currentTeam].name + " " + JSON.stringify(move) );
-               return;  // no need to proceed
+               break;  // no need to proceed
            }
     
     
@@ -513,7 +513,7 @@ function makeMove() {
             // we have a problem if we can't find current piece already found
             if (currentPieceIdx === -1) {
                 alert("SYSTEM ERROR 1: CUrrent Piece IDX not FOUND!??");
-                return;
+                break;
             }
     
             // update current Piece position to last entry in move request list
