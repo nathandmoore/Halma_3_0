@@ -414,13 +414,13 @@ function initGame(canvasElement, moveCountElement) {
 }
 
 function make20Moves() {
-    for(var i=0; i<20; i++) {
-       makeMove();
-       if (isGameOver() )  break;
-    }
+    //this needs to be changed to startGame();
+    //this is not the function that will repeatedly call makeMove so that the game plays on its own
+    setInterval(function(){makeMove()},3000);
+
 }
 //
-// Called when MOVE button pressed
+// Called when MOVE is called by interval
 // todo: add turns
 function makeMove() {
 
@@ -430,91 +430,94 @@ function makeMove() {
     document.getElementById("movecount").innerHTML = gMoveCount;
 
     var currentTeam = gTurnCount++ % gNumTeams;
-
-    var resp;  // response from AJAX call:  if Python send with parm
-    if (gTeamList[currentTeam].sendPostNoParm) {
-        resp = makeAjaxPostMoveRequestNoParm(currentTeam);
-    }
-    else resp = makeAjaxPostMoveRequestWithParm(currentTeam);
-
-     // AJAX CALL : get move for current team - as text (10/25/14)
-    //  convert text to json to show any errors in AI output
-    var move;
-    try {
-        move = JSON.parse(resp);
-    }
-    catch (e) {
-        alert("Data from AI at:" + gTeamList[currentTeam].url +
-                "is NOT JSON! Output received was:" + resp);
-        return;
-    }
-
-
-    // debug
-    console.log("AI move Request: " + JSON.stringify(move));
-
-
-    //fc: display incoming json and Team Name
-    var teamSpan         = document.getElementById("AITeamName");
-    teamSpan.innerHTML   = gTeamList[currentTeam].name;
-    teamSpan.style.color = gTeamList[currentTeam].color;
-    document.getElementById("responseString").innerHTML = JSON.stringify(move);
-
-     // is piece to move on current team? if not exit
-     var locPiece = move.from;
-     var currPieceLoc = new Cell(locPiece.y, locPiece.x);
-
-     if(!isCellOnTeam(currPieceLoc, gTeamList[currentTeam].teamPieces)) {
-         //update bad move count
-         alert("BAD MOVE Request: Requested Piece to Move not Valid");
-         return;
-     }
-
-        var movePieceLocs = move.to;
-
-        // create moves - array of Cells where AI wants to move
-        var moves = [];
-        for(var i = 0; i < movePieceLocs.length; i++) {
-            moves.push(new Cell(movePieceLocs[i].y, movePieceLocs[i].x));
+    
+    for(var pieceNum = 0; pieceNum < 9; pieceNum++){
+        
+        var resp;  // response from AJAX call:  if Python send with parm
+        if (gTeamList[currentTeam].sendPostNoParm) {
+            resp = makeAjaxPostMoveRequestNoParm(currentTeam, pieceNum);
         }
-
-
-       // 10.29.14: need temp array since can't pass moves to function w/out values changing
-       var workingMovesArr = [];
-       for (var i = 0; i < moves.length; i++) {
-             workingMovesArr[i] = moves[i]; // copy over so can pass it
-       }
-
-       // check that the move sequence requested is valid
-       if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
-           alert("Invalid Move request from AI " +
-                  gTeamList[currentTeam].name + " " + JSON.stringify(move) );
-           return;  // no need to proceed
-       }
-
-
-        // if moves array is ok, reset the piece we are moving
-        // find ref to the actual piece in the teamPieces array
-
-        var currentPieceIdx = -1;
-        for(var i=0; i< gTeamList[currentTeam].teamPieces.length; i++ ){
-            if (currPieceLoc.x ===  gTeamList[currentTeam].teamPieces[i].x &&
-                 currPieceLoc.y ===  gTeamList[currentTeam].teamPieces[i].y) {
-              currentPieceIdx = i;
-              break;
-            }
-        };
-
-        // we have a problem if we can't find current piece already found
-        if (currentPieceIdx === -1) {
-            alert("SYSTEM ERROR 1: CUrrent Piece IDX not FOUND!??");
+        else resp = makeAjaxPostMoveRequestWithParm(currentTeam, pieceNum);
+    
+         // AJAX CALL : get move for current team - as text (10/25/14)
+        //  convert text to json to show any errors in AI output
+        var move;
+        try {
+            move = JSON.parse(resp);
+        }
+        catch (e) {
+            alert("Data from AI at:" + gTeamList[currentTeam].url +
+                    "is NOT JSON! Output received was:" + resp);
             return;
         }
-
-        // update current Piece position to last entry in move request list
-        gTeamList[currentTeam].teamPieces[currentPieceIdx].y = moves[moves.length - 1].y;
-        gTeamList[currentTeam].teamPieces[currentPieceIdx].x = moves[moves.length - 1].x;
-
+    
+    
+        // debug
+        console.log("AI move Request: " + JSON.stringify(move));
+    
+    
+        //fc: display incoming json and Team Name
+        var teamSpan         = document.getElementById("AITeamName");
+        teamSpan.innerHTML   = gTeamList[currentTeam].name;
+        teamSpan.style.color = gTeamList[currentTeam].color;
+        //might need to change this to instead append the current move and clear it when the next player goes
+        document.getElementById("responseString").innerHTML = JSON.stringify(move);
+    
+         // is piece to move on current team? if not exit
+         var locPiece = move.from;
+         var currPieceLoc = new Cell(locPiece.y, locPiece.x);
+    
+         if(!isCellOnTeam(currPieceLoc, gTeamList[currentTeam].teamPieces)) {
+             //update bad move count
+             alert("BAD MOVE Request: Requested Piece to Move not Valid");
+             return;
+         }
+    
+            var movePieceLocs = move.to;
+    
+            // create moves - array of Cells where AI wants to move
+            var moves = [];
+            for(var i = 0; i < movePieceLocs.length; i++) {
+                moves.push(new Cell(movePieceLocs[i].y, movePieceLocs[i].x));
+            }
+    
+    
+           // 10.29.14: need temp array since can't pass moves to function w/out values changing
+           var workingMovesArr = [];
+           for (var i = 0; i < moves.length; i++) {
+                 workingMovesArr[i] = moves[i]; // copy over so can pass it
+           }
+    
+           // check that the move sequence requested is valid
+           if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
+               alert("Invalid Move request from AI " +
+                      gTeamList[currentTeam].name + " " + JSON.stringify(move) );
+               return;  // no need to proceed
+           }
+    
+    
+            // if moves array is ok, reset the piece we are moving
+            // find ref to the actual piece in the teamPieces array
+    
+            var currentPieceIdx = -1;
+            for(var i=0; i< gTeamList[currentTeam].teamPieces.length; i++ ){
+                if (currPieceLoc.x ===  gTeamList[currentTeam].teamPieces[i].x &&
+                     currPieceLoc.y ===  gTeamList[currentTeam].teamPieces[i].y) {
+                  currentPieceIdx = i;
+                  break;
+                }
+            };
+    
+            // we have a problem if we can't find current piece already found
+            if (currentPieceIdx === -1) {
+                alert("SYSTEM ERROR 1: CUrrent Piece IDX not FOUND!??");
+                return;
+            }
+    
+            // update current Piece position to last entry in move request list
+            gTeamList[currentTeam].teamPieces[currentPieceIdx].y = moves[moves.length - 1].y;
+            gTeamList[currentTeam].teamPieces[currentPieceIdx].x = moves[moves.length - 1].x;
+        }
         // Draw the board and all the pieces in their team colors
         drawBoard();
 
@@ -554,7 +557,7 @@ function makeMove() {
 
     }
 
-function makeAjaxPostMoveRequestNoParm(teamIdx) {
+function makeAjaxPostMoveRequestNoParm(teamIdx, pieceToMove) {
 
     var move = "No move received. See Alerts.";  // overwrite w/ HTTP response
 
@@ -563,7 +566,7 @@ function makeAjaxPostMoveRequestNoParm(teamIdx) {
         url: gTeamList[teamIdx].url,
         dataType: "text",
         async: false,
-        data: boardToJSON(teamIdx),
+        data: boardToJSON(teamIdx, pieceToMove),
         success: function(msg) {
             move = msg;
         },
@@ -590,7 +593,7 @@ function makeAjaxPostMoveRequestNoParm(teamIdx) {
       return move;
 }
 
-function makeAjaxPostMoveRequestWithParm(teamIdx) {
+function makeAjaxPostMoveRequestWithParm(teamIdx, pieceToMove) {
 
 var move;
 
@@ -599,7 +602,7 @@ var move;
         url: gTeamList[teamIdx].url,
         dataType: "text",
         async: false,
-        data: {board: boardToJSON(teamIdx)},
+        data: {board: boardToJSON(teamIdx, pieceToMove)},
         success: function(msg) {
             move = msg;
         },
@@ -648,7 +651,7 @@ $(document).ready(function() {
 });
 
 // format  data based on team turn
-function boardToJSON(teamIdx) {
+function boardToJSON(teamIdx, pieceToMove) {
     var enemyIdx = 0;
     if(teamIdx===0) enemyIdx = 1;
 
@@ -657,7 +660,7 @@ function boardToJSON(teamIdx) {
         "destinations" : gTeamList[teamIdx].teamDestinations,
         "boardSize" : kBoardHeight,
         "enemy" : gTeamList[enemyIdx].teamPieces,
-        "enemydestinations" : gTeamList[enemyIdx].teamDestinations,
+        "currPiece" : pieceToMove,
         "moveCount" : gMoveCount
 
     });
