@@ -413,10 +413,11 @@ function initGame(canvasElement, moveCountElement) {
     $('#game').show();
 }
 
-function make20Moves() {
+function startGame() {
     //this needs to be changed to startGame();
     //this is not the function that will repeatedly call makeMove so that the game plays on its own
     setInterval(function(){makeMove()},3000);
+    document.getElementByID("startGame").style.display = "none";
 
 }
 //
