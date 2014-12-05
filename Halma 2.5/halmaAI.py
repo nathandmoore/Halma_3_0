@@ -17,23 +17,16 @@ class Cell:
     => Description:
         Intended to represent pieces and destinations
     => Class variables:
-        . int num: number of the piece
         . int x: coordinate on game board
         . int y: coordinate on game board
         . bool arrived: true if the piece has arrived at destination
         * Upper left corner of board is 0,0
     """
 
-    def __init__(self,x,y,num=0):
-        self.num = num
+    def __init__(self,x,y):
         self.x = x
         self.y = y
         self.arrived = False
-
-
-    @property
-    def num(self):
-        return selt.__num
 
 
     @property
@@ -49,11 +42,6 @@ class Cell:
     @property
     def arrived(self):
         return self.__arrived
-
-
-    @num.setter
-    def num(self,num):
-        self.__num = num
 
 
     @x.setter
