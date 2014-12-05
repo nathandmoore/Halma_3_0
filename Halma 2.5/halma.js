@@ -417,7 +417,8 @@ function startGame() {
     //this needs to be changed to startGame();
     //this is not the function that will repeatedly call makeMove so that the game plays on its own
     setInterval(function(){makeMove()},3000);
-    document.getElementByID("startGame").style.display = "none";
+    var element = document.getElementByID("startGame")
+    element.style.display = "none";
 
 }
 //
@@ -432,7 +433,7 @@ function makeMove() {
 
     var currentTeam = gTurnCount++ % gNumTeams;
     
-    for(var pieceNum = 0; pieceNum < 9; pieceNum++){
+    for(var pieceNum = 0; pieceNum < 12; pieceNum++){
         
         var resp;  // response from AJAX call:  if Python send with parm
         if (gTeamList[currentTeam].sendPostNoParm) {
@@ -471,7 +472,7 @@ function makeMove() {
          if(!isCellOnTeam(currPieceLoc, gTeamList[currentTeam].teamPieces)) {
              //update bad move count
              alert("BAD MOVE Request: Requested Piece to Move not Valid");
-             return;
+             break;
          }
     
             var movePieceLocs = move.to;
@@ -493,7 +494,7 @@ function makeMove() {
            if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
                alert("Invalid Move request from AI " +
                       gTeamList[currentTeam].name + " " + JSON.stringify(move) );
-               return;  // no need to proceed
+               break;  // no need to proceed
            }
     
     
@@ -512,7 +513,7 @@ function makeMove() {
             // we have a problem if we can't find current piece already found
             if (currentPieceIdx === -1) {
                 alert("SYSTEM ERROR 1: CUrrent Piece IDX not FOUND!??");
-                return;
+                break;
             }
     
             // update current Piece position to last entry in move request list
