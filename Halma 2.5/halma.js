@@ -433,7 +433,7 @@ function makeMove() {
 
     var currentTeam = gTurnCount++ % gNumTeams;
     
-    for(var pieceNum = 0; pieceNum < 9; pieceNum++){
+    for(var pieceNum = 0; pieceNum < 12; pieceNum++){
         
         var resp;  // response from AJAX call:  if Python send with parm
         if (gTeamList[currentTeam].sendPostNoParm) {
