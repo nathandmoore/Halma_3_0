@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 # AUTHOR: NATHAN MOORE
-# URL: http://lyle.smu.edu/~ndmoore/cgi-bin/AI.py
+# URL: http://lyle.smu.edu/~ndmoore/cgi-bin/halmAI_dumb.py
 # Does not take enemy pieces into account
 
 import cgi
@@ -93,7 +93,7 @@ def getMove(pieces,destRegion,pieceToMove):
 
     if not (pieces[pieceToMove].arrived and destCell.arrived):
         # if the piece to move has not arrived at its destination
-        #simulate the next move to take
+        # simulate the next move to take
         directMove = makeMove(pieces[pieceToMove],destCell)
         # Modify the move if a jump is available
         #  Check if a piece is already in the location you want to
@@ -122,28 +122,28 @@ def makeMove(pieceToMove,destCell):
                  to
     """
 
-    #calculate direct move toward destination
+    # calculate direct move toward destination
     directMove = Cell(0,0)
 
     if pieceToMove.x > destCell.x:
-        #move left
+        # move left
         directMove.x = pieceToMove.x-1
     elif pieceToMove.x < destCell.x:
-        #move right
+        # move right
         directMove.x = pieceToMove.x+1
     else:
-        #don't move
+        # don't move
         directMove.x = pieceToMove.x
 
-    #calculate vertical movement
+    # calculate vertical movement
     if pieceToMove.y > destCell.y:
-        #move down
+        # move down
         directMove.y = pieceToMove.y-1
     elif pieceToMove.y < destCell.y:
-        #move up
+        # move up
         directMove.y = pieceToMove.y+1
     else:
-        #don't move
+        # don't move
         directMove.y = pieceToMove.y
 
     return directMove
@@ -175,21 +175,25 @@ def determineJump(pieces,pieceToMove,move,destCell):
     newMove["jump"] = True
 
     for piece in range(0,numPieces):
-        #check location of pieces to find if there is one to jump
+        # check location of pieces to find if there is one to jump
         if (pieces[piece].x == move.x and pieces[piece].y == move.y):
-            #if there's a piece to jump
-            #look at next cell to see if jump is possible
+            # calculate next potential move to simulate jump
             jumpMove = makeMove(move,destCell)
 
-            # print (jumpMove.x - pieces[pieceToMove].x)
-            # print ( pieces[pieceToMove].y - jumpMove.y)
+            # prevent L-shaped jumps: if x-displacement or y-displacement are
+            # 2x the other, then that is an L shaped move: (up 2, over 1) or
+            # (up 1, over 2)
+            if (( (jumpMove.x - pieces[pieceToMove].x) ==
+                (2 * (pieces[pieceToMove].y - jumpMove.y)) ) or
+                ( (pieces[pieceToMove].y - jumpMove.y) ==
+                 (2 * (jumpMove.x - pieces[pieceToMove].x)) )):
 
-            if ((jumpMove.x - pieces[pieceToMove].x)
-                == (2 * (pieces[pieceToMove].y - jumpMove.y))):
                 newMove["destx"] = pieces[pieceToMove].x
                 newMove["desty"] = pieces[pieceToMove].y
                 newMove["jump"] = False
 
+            # if there's a piece to jump
+            # look at next cell to see if jump is possible
             for i in range(0,numPieces):
 
                 if (pieces[i].x == jumpMove.x and pieces[i].y == jumpMove.y):
@@ -282,80 +286,46 @@ def checkIfArrived(pieces,dests):
 
 #------------------------------------------------------------------------------
 # get data
-# stringJSON = """{
-#                     "board": {
-#                         "currPiece": 1,
-#                         "pieces": [
-#                             {"y":0,"x":15},
-#                             {"y":15,"x":0},
-#                             {"y":16,"x":0},
-#                             {"y":17,"x":0},
-#                             {"y":14,"x":1},
-#                             {"y":15,"x":1},
-#                             {"y":16,"x":1},
-#                             {"y":17,"x":1},
-#                             {"y":14,"x":2},
-#                             {"y":15,"x":2},
-#                             {"y":16,"x":2},
-#                             {"y":17,"x":2}
-#                         ],
-#                         "destinations": [
-#                             {"y":0,"x":17},
-#                             {"y":1,"x":17},
-#                             {"y":2,"x":17},
-#                             {"y":0,"x":16},
-#                             {"y":1,"x":16},
-#                             {"y":2,"x":16},
-#                             {"y":0,"x":15},
-#                             {"y":1,"x":15},
-#                             {"y":2,"x":15}
-#                         ],
-#                         "enemy":  [
-#                             {"y":11,"x":12},
-#                             {"y":11,"x":11},
-#                             {"y":14,"x":13},
-#                             {"y":17,"x":15},
-#                             {"y":12,"x":12},
-#                             {"y":10,"x":9},
-#                             {"y":15,"x":15},
-#                             {"y":17,"x":16},
-#                             {"y":9,"x":10},
-#                             {"y":14,"x":16},
-#                             {"y":14,"x":15},
-#                             {"y":14,"x":14}
-#                         ],
-#                         "moveCount":49
-#                     }
-#                 }
-#             """
-# stringJSON = """
-# {"board":{"currPiece": 4, "pieces":[{"y":7,"x":7,"team":0},{"y":1,"x":14,"team":0},{"y":10,"x":6,"team":0},{"y":11,"x":6,"team":0},{"y":2,"x":13,"team":0},{"y":3,"x":13,"team":0},{"y":4,"x":13,"team":0},{"y":5,"x":13,"team":0},{"y":2,"x":14,"team":0},{"y":3,"x":14,"team":0},{"y":4,"x":14,"team":0},{"y":11,"x":8,"team":0}],"destinations":[{"y":0,"x":17,"team":-1},{"y":1,"x":17,"team":-1},{"y":2,"x":17,"team":-1},{"y":0,"x":16,"team":-1},{"y":1,"x":16,"team":-1},{"y":2,"x":16,"team":-1},{"y":0,"x":15,"team":-1},{"y":1,"x":15,"team":-1},{"y":2,"x":15,"team":-1}],"boardSize":18,"enemy":[{"y":8,"x":9,"team":1},{"y":9,"x":9,"team":1},{"y":10,"x":9,"team":1},{"y":11,"x":9,"team":1},{"y":8,"x":10,"team":1},{"y":9,"x":10,"team":1},{"y":10,"x":10,"team":1},{"y":11,"x":10,"team":1},{"y":8,"x":11,"team":1},{"y":9,"x":11,"team":1},{"y":10,"x":11,"team":1},{"y":11,"x":11,"team":1}],"currPiece":4,"moveCount":13}}
-# """
-# #
+# stringJSON = """{ "board":
+#                     {"pieces":[
+#                         {"y":7,"x":7,"team":0},
+#                         {"y":9,"x":6,"team":0},
+#                         {"y":10,"x":6,"team":0},
+#                         {"y":11,"x":6,"team":0},
+#                         {"y":7,"x":8,"team":0},
+#                         {"y":3,"x":13,"team":0},
+#                         {"y":2,"x":15,"team":0},
+#                         {"y":3,"x":15,"team":0},
+#                         {"y":2,"x":14,"team":0},
+#                         {"y":3,"x":14,"team":0},
+#                         {"y":4,"x":14,"team":0},
+#                         {"y":11,"x":8,"team":0}],"destinations":[{"y":0,"x":17,"team":-1},{"y":1,"x":17,"team":-1},{"y":2,"x":17,"team":-1},{"y":0,"x":16,"team":-1},{"y":1,"x":16,"team":-1},{"y":2,"x":16,"team":-1},{"y":0,"x":15,"team":-1},{"y":1,"x":15,"team":-1},{"y":2,"x":15,"team":-1}],"boardSize":18,"enemy":[{"y":8,"x":9,"team":1},{"y":9,"x":9,"team":1},{"y":10,"x":9,"team":1},{"y":11,"x":9,"team":1},{"y":8,"x":10,"team":1},{"y":9,"x":10,"team":1},{"y":10,"x":10,"team":1},{"y":11,"x":10,"team":1},{"y":8,"x":11,"team":1},{"y":9,"x":11,"team":1},{"y":10,"x":11,"team":1},{"y":11,"x":11,"team":1}],"currPiece":9,"moveCount":13}
+#             }"""
+
 # stringJSON = json.loads(stringJSON)
 # gameData = stringJSON["board"]
 
 postData = cgi.FieldStorage()
 gameData = ast.literal_eval(postData.getvalue('board'))
 
-#set pieces as cells
+# set pieces as cells
 pieces = gameData["pieces"]
 pieces = setPieces(pieces)
 
-#set destinations as cells
+# set destinations as cells
 destRegion = gameData["destinations"]
 destRegion = setDestinations(destRegion)
 
-#get the number of the piece to move
+# get the number of the piece to move
 pieceToMove = gameData["currPiece"]
 
-#check if pieces are in destinations
+# check if pieces are in destinations
 checkIfArrived(pieces,destRegion)
 
-#make next move
+# make next move
 nextMove = getMove(pieces,destRegion,pieceToMove)
 
-#return JSON of next move
+# return JSON of next move
 nextMove = {
     'from': {'x': nextMove['piecex'], 'y': nextMove['piecey']},
     'to': [{'x': nextMove['destx'], 'y': nextMove['desty']}]

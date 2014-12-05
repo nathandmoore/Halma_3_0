@@ -1,15 +1,5 @@
-/* V 2.3
- *  adds team property to Cell. default is -1 for just a Cell
- *  team will be 0,1,.. the index into gTeamList
- *  todo: team - count rejected moves/ jumps / longest jump
- *   10/25/14
- *   isCellOnTeam(cell, teamArr)
- *   10/29/14: fixed bug where now .py as 1st or 2nd opponent gets the board= parm
- *   10/29/14: fixed breadcrumbs
- *   10/20/14: mod to isvalidMoveRequest to allow a piece to NOT move w/out alert
- *              boolean isPieceHoldingPosition(src, dest)
- *   11/2/14: now delivers moveCount as part of json delivered to AI
- *              allows AI to determine beginning of game if moveCount =1 or 2
+/* V 2.5
+
  */
 
 var kBoardWidth = 18; //change to 0 to use with Initialization form
@@ -432,15 +422,15 @@ function makeMove() {
     document.getElementById("movecount").innerHTML = gMoveCount;
 
     var currentTeam = gTurnCount++ % gNumTeams;
-    
+
     for(var pieceNum = 0; pieceNum < 12; pieceNum++){
-        
+
         var resp;  // response from AJAX call:  if Python send with parm
         if (gTeamList[currentTeam].sendPostNoParm) {
             resp = makeAjaxPostMoveRequestNoParm(currentTeam, pieceNum);
         }
         else resp = makeAjaxPostMoveRequestWithParm(currentTeam, pieceNum);
-    
+
          // AJAX CALL : get move for current team - as text (10/25/14)
         //  convert text to json to show any errors in AI output
         var move;
@@ -452,55 +442,55 @@ function makeMove() {
                     "is NOT JSON! Output received was:" + resp);
             return;
         }
-    
-    
+
+
         // debug
         console.log("AI move Request: " + JSON.stringify(move));
-    
-    
+
+
         //fc: display incoming json and Team Name
         var teamSpan         = document.getElementById("AITeamName");
         teamSpan.innerHTML   = gTeamList[currentTeam].name;
         teamSpan.style.color = gTeamList[currentTeam].color;
         //might need to change this to instead append the current move and clear it when the next player goes
         document.getElementById("responseString").innerHTML = JSON.stringify(move);
-    
+
          // is piece to move on current team? if not exit
          var locPiece = move.from;
          var currPieceLoc = new Cell(locPiece.y, locPiece.x);
-    
+
          if(!isCellOnTeam(currPieceLoc, gTeamList[currentTeam].teamPieces)) {
              //update bad move count
              alert("BAD MOVE Request: Requested Piece to Move not Valid");
              break;
          }
-    
+
             var movePieceLocs = move.to;
-    
+
             // create moves - array of Cells where AI wants to move
             var moves = [];
             for(var i = 0; i < movePieceLocs.length; i++) {
                 moves.push(new Cell(movePieceLocs[i].y, movePieceLocs[i].x));
             }
-    
-    
+
+
            // 10.29.14: need temp array since can't pass moves to function w/out values changing
            var workingMovesArr = [];
            for (var i = 0; i < moves.length; i++) {
                  workingMovesArr[i] = moves[i]; // copy over so can pass it
            }
-    
+
            // check that the move sequence requested is valid
            if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
                alert("Invalid Move request from AI " +
                       gTeamList[currentTeam].name + " " + JSON.stringify(move) );
                break;  // no need to proceed
            }
-    
-    
+
+
             // if moves array is ok, reset the piece we are moving
             // find ref to the actual piece in the teamPieces array
-    
+
             var currentPieceIdx = -1;
             for(var i=0; i< gTeamList[currentTeam].teamPieces.length; i++ ){
                 if (currPieceLoc.x ===  gTeamList[currentTeam].teamPieces[i].x &&
@@ -509,13 +499,13 @@ function makeMove() {
                   break;
                 }
             };
-    
+
             // we have a problem if we can't find current piece already found
             if (currentPieceIdx === -1) {
                 alert("SYSTEM ERROR 1: CUrrent Piece IDX not FOUND!??");
                 break;
             }
-    
+
             // update current Piece position to last entry in move request list
             gTeamList[currentTeam].teamPieces[currentPieceIdx].y = moves[moves.length - 1].y;
             gTeamList[currentTeam].teamPieces[currentPieceIdx].x = moves[moves.length - 1].x;

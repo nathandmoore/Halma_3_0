@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 # AUTHOR: NATHAN MOORE
-# URL: http://lyle.smu.edu/~ndmoore/cgi-bin/AI.py
+# URL: http://lyle.smu.edu/~ndmoore/cgi-bin/halmaAI_smart.py
 # Takes enemy pieces into account
 
 import cgi
@@ -94,7 +94,7 @@ def getMove(pieces,destRegion,enemy,pieceToMove):
 
     if not (pieces[pieceToMove].arrived and destCell.arrived):
         # if the piece to move has not arrived at its destination
-        #simulate the next move to take
+        # simulate the next move to take
         directMove = makeMove(pieces[pieceToMove],destCell)
         # Modify the move if a jump is available
         #  Check if a piece is already in the location you want to
@@ -123,28 +123,28 @@ def makeMove(pieceToMove,destCell):
                  to
     """
 
-    #calculate direct move toward destination
+    # calculate direct move toward destination
     directMove = Cell(0,0)
 
     if pieceToMove.x > destCell.x:
-        #move left
+        # move left
         directMove.x = pieceToMove.x-1
     elif pieceToMove.x < destCell.x:
-        #move right
+        # move right
         directMove.x = pieceToMove.x+1
     else:
-        #don't move
+        # don't move
         directMove.x = pieceToMove.x
 
-    #calculate vertical movement
+    # calculate vertical movement
     if pieceToMove.y > destCell.y:
-        #move down
+        # move down
         directMove.y = pieceToMove.y-1
     elif pieceToMove.y < destCell.y:
-        #move up
+        # move up
         directMove.y = pieceToMove.y+1
     else:
-        #don't move
+        # don't move
         directMove.y = pieceToMove.y
 
     return directMove
@@ -177,20 +177,26 @@ def determineJump(pieces,pieceToMove,move,destCell,enemy):
     newMove["jump"] = True
 
     for piece in range(0,numPieces):
-        #check location of pieces to find if there is one to jump
+        # check location of pieces to find if there is one to jump
         if ((pieces[piece].x == move.x and pieces[piece].y == move.y)
              or
              (enemy[piece].x == move.x and enemy[piece].y == move.y)):
-            #if there's a piece to jump
-            #look at next cell to see if jump is possible
+            # calculate next potential move to simulate jump
             jumpMove = makeMove(move,destCell)
 
-            if ((jumpMove.x - pieces[pieceToMove].x)
-                == (2 * (pieces[pieceToMove].y - jumpMove.y))):
+            # prevent L-shaped jumps: if x-displacement or y-displacement are
+            # 2x the other, then that is an L shaped move
+            if (( (jumpMove.x - pieces[pieceToMove].x) ==
+                (2 * (pieces[pieceToMove].y - jumpMove.y)) ) or
+                ( (pieces[pieceToMove].y - jumpMove.y) ==
+                 (2 * (jumpMove.x - pieces[pieceToMove].x)) )):
+
                 newMove["destx"] = pieces[pieceToMove].x
                 newMove["desty"] = pieces[pieceToMove].y
                 newMove["jump"] = False
 
+            # if there's a piece to jump
+            # look at next cell to see if jump is possible
             for i in range(0,numPieces):
 
                 if ((pieces[i].x == jumpMove.x and pieces[i].y == jumpMove.y)
@@ -270,7 +276,7 @@ def checkIfArrived(pieces,dests):
     numDests = len(dests)
     numPieces = len(pieces)
 
-    #check if any pieces at the back of the destination region
+    # check if any pieces at the back of the destination region
     for dest in range(0,numDests):
 
         for piece in range(0,numPieces):
@@ -283,99 +289,65 @@ def checkIfArrived(pieces,dests):
                 break
 
 
+# def testCheckIfArrived(pieces)
+
+
+# def generateTestJSON():
+#     """
+#     Function: generateTestJSON
+#         => Description:
+#             Creates sample JSON input for testing the validity of AI moves
+#         => Parameters:
+#             . none
+#         =>
+#     """
+
+
+#     stringJSON = {
+#         'board': {
+#             'currPiece': currPiece,
+#             'pieces': [
+#                 {'y': ,'x': },
+#             ],
+#             'destinations': [
+#                 {'y': ,'x': },
+#             ],
+#             'enemy': [
+#                 {'y': ,'x': },
+#             ],
+#             'moveCount': ,
+#         }
+#     }
+
+
 #------------------------------------------------------------------------------
 # get data
-# stringJSON = """{
-#                     "board": {
-#                         "currPiece": 1,
-#                         "pieces": [
-#                             {"y":0,"x":15},
-#                             {"y":15,"x":0},
-#                             {"y":16,"x":0},
-#                             {"y":17,"x":0},
-#                             {"y":14,"x":1},
-#                             {"y":15,"x":1},
-#                             {"y":16,"x":1},
-#                             {"y":17,"x":1},
-#                             {"y":14,"x":2},
-#                             {"y":15,"x":2},
-#                             {"y":16,"x":2},
-#                             {"y":17,"x":2}
-#                         ],
-#                         "destinations": [
-#                             {"y":0,"x":17},
-#                             {"y":1,"x":17},
-#                             {"y":2,"x":17},
-#                             {"y":0,"x":16},
-#                             {"y":1,"x":16},
-#                             {"y":2,"x":16},
-#                             {"y":0,"x":15},
-#                             {"y":1,"x":15},
-#                             {"y":2,"x":15}
-#                         ],
-#                         "enemy":  [
-#                             {"y":11,"x":12},
-#                             {"y":11,"x":11},
-#                             {"y":14,"x":13},
-#                             {"y":17,"x":15},
-#                             {"y":12,"x":12},
-#                             {"y":10,"x":9},
-#                             {"y":15,"x":15},
-#                             {"y":17,"x":16},
-#                             {"y":9,"x":10},
-#                             {"y":14,"x":16},
-#                             {"y":14,"x":15},
-#                             {"y":14,"x":14}
-#                         ],
-#                         "moveCount":49
-#                     }
-#                 }
-#             """
-# stringJSON = """
-#                 {"board":
-#                     {
-#                         "currPiece": 3,
-#                         "pieces":[
-#                             {"y":12,"x":2,"team":0},
-#                             {"y":12,"x":3,"team":0},
-#                             {"y":16,"x":0,"team":0},
-#                             {"y":17,"x":0,"team":0},
-#                             {"y":14,"x":1,"team":0},
-#                             {"y":15,"x":1,"team":0},
-#                             {"y":16,"x":1,"team":0},
-#                             {"y":17,"x":1,"team":0},
-#                             {"y":14,"x":2,"team":0},
-#                             {"y":15,"x":2,"team":0},
-#                             {"y":16,"x":2,"team":0},
-#                             {"y":17,"x":2,"team":0}],"destinations":[{"y":0,"x":17,"team":-1},{"y":1,"x":17,"team":-1},{"y":2,"x":17,"team":-1},{"y":0,"x":16,"team":-1},{"y":1,"x":16,"team":-1},{"y":2,"x":16,"team":-1},{"y":0,"x":15,"team":-1},{"y":1,"x":15,"team":-1},{"y":2,"x":15,"team":-1}],"boardSize":18,"enemy":[{"y":13,"x":14,"team":1},{"y":14,"x":14,"team":1},{"y":15,"x":14,"team":1},{"y":16,"x":14,"team":1},{"y":13,"x":15,"team":1},{"y":14,"x":15,"team":1},{"y":15,"x":15,"team":1},{"y":16,"x":15,"team":1},{"y":13,"x":16,"team":1},{"y":15,"x":17,"team":1},{"y":16,"x":17,"team":1},{"y":17,"x":17,"team":1}],"currPiece":2,"moveCount":3}}"""
-# stringJSON = json.loads(stringJSON)
-# gameData = stringJSON["board"]
 
 postData = cgi.FieldStorage()
 gameData = ast.literal_eval(postData.getvalue('board'))
 
-#set pieces as cells
+# set pieces as cells
 pieces = gameData["pieces"]
 pieces = setPieces(pieces)
 
-#set enemy pieces as cells
+# set enemy pieces as cells
 enemy = gameData["enemy"]
 enemy = setPieces(enemy)
 
-#set destinations as cells
+# set destinations as cells
 destRegion = gameData["destinations"]
 destRegion = setDestinations(destRegion)
 
-#get the number of the piece to move
+# get the number of the piece to move
 pieceToMove = gameData["currPiece"]
 
-#check if pieces are in destinations
+# check if pieces are in destinations
 checkIfArrived(pieces,destRegion)
 
-#make next move
+# make next move
 nextMove = getMove(pieces,destRegion,enemy,pieceToMove)
 
-#return JSON of next move
+# return JSON of next move
 nextMove = {
     'from': {'x': nextMove['piecex'], 'y': nextMove['piecey']},
     'to': [{'x': nextMove['destx'], 'y': nextMove['desty']}]
