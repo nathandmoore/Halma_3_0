@@ -92,19 +92,26 @@ def getMove(pieces,destRegion,enemy,pieceToMove):
     else:
         destCell = destRegion[pieceToMove]
 
-    if not (pieces[pieceToMove].arrived and destCell.arrived):
-        # if the piece to move has not arrived at its destination
-        # simulate the next move to take
-        directMove = makeMove(pieces[pieceToMove],destCell)
-        # Modify the move if a jump is available
-        #  Check if a piece is already in the location you want to
-        #     move to
-        #  if yes: check next location along path
-        #      if yet another piece: skip move
-        #      if not: move to that second location (jump)
-        #  if no: move to location
-        nextMove = determineJump(pieces,pieceToMove,directMove,destCell,enemy)
-    # else skip move
+    if (pieces[pieceToMove].arrived and destCell.arrived):
+        return nextMove
+    elif (not pieces[pieceToMove].arrived) and destCell.arrived:
+        numDests = len(destRegion)
+        for dest in range(0,numDests):
+            if not destRegion[dest].arrived:
+                destCell = destRegion[dest]
+                break
+
+    # if the piece to move has not arrived at its destination
+    # simulate the next move to take
+    directMove = makeMove(pieces[pieceToMove],destCell)
+    # Modify the move if a jump is available
+    #  Check if a piece is already in the location you want to
+    #     move to
+    #  if yes: check next location along path
+    #      if yet another piece: skip move
+    #      if not: move to that second location (jump)
+    #  if no: move to location
+    nextMove = determineJump(pieces,pieceToMove,directMove,destCell)
 
     return nextMove
 

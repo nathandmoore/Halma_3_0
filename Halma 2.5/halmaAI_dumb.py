@@ -91,19 +91,26 @@ def getMove(pieces,destRegion,pieceToMove):
     else:
         destCell = destRegion[pieceToMove]
 
-    if not (pieces[pieceToMove].arrived and destCell.arrived):
-        # if the piece to move has not arrived at its destination
-        # simulate the next move to take
-        directMove = makeMove(pieces[pieceToMove],destCell)
-        # Modify the move if a jump is available
-        #  Check if a piece is already in the location you want to
-        #     move to
-        #  if yes: check next location along path
-        #      if yet another piece: skip move
-        #      if not: move to that second location (jump)
-        #  if no: move to location
-        nextMove = determineJump(pieces,pieceToMove,directMove,destCell)
-    # else skip move
+    if (pieces[pieceToMove].arrived and destCell.arrived):
+        return nextMove
+    elif (not pieces[pieceToMove].arrived) and destCell.arrived:
+        numDests = len(destRegion)
+        for dest in range(0,numDests):
+            if not destRegion[dest].arrived:
+                destCell = destRegion[dest]
+                break
+
+    # if the piece to move has not arrived at its destination
+    # simulate the next move to take
+    directMove = makeMove(pieces[pieceToMove],destCell)
+    # Modify the move if a jump is available
+    #  Check if a piece is already in the location you want to
+    #     move to
+    #  if yes: check next location along path
+    #      if yet another piece: skip move
+    #      if not: move to that second location (jump)
+    #  if no: move to location
+    nextMove = determineJump(pieces,pieceToMove,directMove,destCell)
 
     return nextMove
 
@@ -450,12 +457,8 @@ def generateTestJSON(testNum):
 # print ">> " + str(testCheckIfArrived())
 #------------------------------------------------------------------------------
 # GET DATA
-
-stringJSON = """{"board":{"pieces":[{"y":0,"x":0,"team":1},{"y":2,"x":2,"team":1},{"y":3,"x":2,"team":1},{"y":3,"x":1,"team":1},{"y":1,"x":1,"team":1},{"y":2,"x":3,"team":1},{"y":3,"x":3,"team":1},{"y":4,"x":3,"team":1},{"y":2,"x":4,"team":1},{"y":1,"x":3,"team":1},{"y":3,"x":4,"team":1},{"y":4,"x":4,"team":1}],"destinations":[{"y":0,"x":0,"team":-1},{"y":1,"x":0,"team":-1},{"y":2,"x":0,"team":-1},{"y":0,"x":1,"team":-1},{"y":1,"x":1,"team":-1},{"y":2,"x":1,"team":-1},{"y":0,"x":2,"team":-1},{"y":1,"x":2,"team":-1},{"y":2,"x":2,"team":-1}],"boardSize":18,"enemy":[{"y":0,"x":16,"team":0},{"y":1,"x":17,"team":0},{"y":4,"x":12,"team":0},{"y":5,"x":12,"team":0},{"y":1,"x":16,"team":0},{"y":2,"x":16,"team":0},{"y":0,"x":15,"team":0},{"y":1,"x":15,"team":0},{"y":2,"x":15,"team":0},{"y":3,"x":14,"team":0},{"y":3,"x":15,"team":0},{"y":6,"x":13,"team":0}],"currPiece":1,"moveCount":30}}"""
-stringJSON = json.loads(stringJSON)
-gameData = stringJSON["board"]
-# postData = cgi.FieldStorage()
-# gameData = ast.literal_eval(postData.getvalue('board'))
+postData = cgi.FieldStorage()
+gameData = ast.literal_eval(postData.getvalue('board'))
 
 # set pieces as cells
 pieces = gameData["pieces"]
