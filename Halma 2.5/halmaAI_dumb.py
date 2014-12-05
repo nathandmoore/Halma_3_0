@@ -85,7 +85,11 @@ def getMove(pieces,destRegion,pieceToMove):
     nextMove["desty"] = pieces[pieceToMove].y
     nextMove["piecex"] = pieces[pieceToMove].x
     nextMove["piecey"] = pieces[pieceToMove].y
-    destCell = destRegion[pieceToMove]
+
+    if pieceToMove > 8:
+        destCell = destRegion[pieceToMove-3]
+    else:
+        destCell = destRegion[pieceToMove]
 
     if not (pieces[pieceToMove].arrived and destCell.arrived):
         # if the piece to move has not arrived at its destination
