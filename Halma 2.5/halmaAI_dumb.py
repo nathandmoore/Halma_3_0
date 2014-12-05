@@ -181,6 +181,15 @@ def determineJump(pieces,pieceToMove,move,destCell):
             #look at next cell to see if jump is possible
             jumpMove = makeMove(move,destCell)
 
+            # print (jumpMove.x - pieces[pieceToMove].x)
+            # print ( pieces[pieceToMove].y - jumpMove.y)
+
+            if ((jumpMove.x - pieces[pieceToMove].x)
+                == (2 * (pieces[pieceToMove].y - jumpMove.y))):
+                newMove["destx"] = pieces[pieceToMove].x
+                newMove["desty"] = pieces[pieceToMove].y
+                newMove["jump"] = False
+
             for i in range(0,numPieces):
 
                 if (pieces[i].x == jumpMove.x and pieces[i].y == jumpMove.y):
@@ -320,23 +329,9 @@ def checkIfArrived(pieces,dests):
 #                 }
 #             """
 # stringJSON = """
-#                 {"board":
-#                     {
-#                         "currPiece": 3,
-#                         "pieces":[
-#                             {"y":12,"x":2,"team":0},
-#                             {"y":12,"x":3,"team":0},
-#                             {"y":16,"x":0,"team":0},
-#                             {"y":17,"x":0,"team":0},
-#                             {"y":14,"x":1,"team":0},
-#                             {"y":15,"x":1,"team":0},
-#                             {"y":16,"x":1,"team":0},
-#                             {"y":17,"x":1,"team":0},
-#                             {"y":14,"x":2,"team":0},
-#                             {"y":15,"x":2,"team":0},
-#                             {"y":16,"x":2,"team":0},
-#                             {"y":17,"x":2,"team":0}],"destinations":[{"y":0,"x":17,"team":-1},{"y":1,"x":17,"team":-1},{"y":2,"x":17,"team":-1},{"y":0,"x":16,"team":-1},{"y":1,"x":16,"team":-1},{"y":2,"x":16,"team":-1},{"y":0,"x":15,"team":-1},{"y":1,"x":15,"team":-1},{"y":2,"x":15,"team":-1}],"boardSize":18,"enemy":[{"y":13,"x":14,"team":1},{"y":14,"x":14,"team":1},{"y":15,"x":14,"team":1},{"y":16,"x":14,"team":1},{"y":13,"x":15,"team":1},{"y":14,"x":15,"team":1},{"y":15,"x":15,"team":1},{"y":16,"x":15,"team":1},{"y":13,"x":16,"team":1},{"y":15,"x":17,"team":1},{"y":16,"x":17,"team":1},{"y":17,"x":17,"team":1}],"currPiece":2,"moveCount":3}}"""
-
+# {"board":{"currPiece": 4, "pieces":[{"y":7,"x":7,"team":0},{"y":1,"x":14,"team":0},{"y":10,"x":6,"team":0},{"y":11,"x":6,"team":0},{"y":2,"x":13,"team":0},{"y":3,"x":13,"team":0},{"y":4,"x":13,"team":0},{"y":5,"x":13,"team":0},{"y":2,"x":14,"team":0},{"y":3,"x":14,"team":0},{"y":4,"x":14,"team":0},{"y":11,"x":8,"team":0}],"destinations":[{"y":0,"x":17,"team":-1},{"y":1,"x":17,"team":-1},{"y":2,"x":17,"team":-1},{"y":0,"x":16,"team":-1},{"y":1,"x":16,"team":-1},{"y":2,"x":16,"team":-1},{"y":0,"x":15,"team":-1},{"y":1,"x":15,"team":-1},{"y":2,"x":15,"team":-1}],"boardSize":18,"enemy":[{"y":8,"x":9,"team":1},{"y":9,"x":9,"team":1},{"y":10,"x":9,"team":1},{"y":11,"x":9,"team":1},{"y":8,"x":10,"team":1},{"y":9,"x":10,"team":1},{"y":10,"x":10,"team":1},{"y":11,"x":10,"team":1},{"y":8,"x":11,"team":1},{"y":9,"x":11,"team":1},{"y":10,"x":11,"team":1},{"y":11,"x":11,"team":1}],"currPiece":4,"moveCount":13}}
+# """
+# #
 # stringJSON = json.loads(stringJSON)
 # gameData = stringJSON["board"]
 

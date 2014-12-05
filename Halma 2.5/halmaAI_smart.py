@@ -185,6 +185,12 @@ def determineJump(pieces,pieceToMove,move,destCell,enemy):
             #look at next cell to see if jump is possible
             jumpMove = makeMove(move,destCell)
 
+            if ((jumpMove.x - pieces[pieceToMove].x)
+                == (2 * (pieces[pieceToMove].y - jumpMove.y))):
+                newMove["destx"] = pieces[pieceToMove].x
+                newMove["desty"] = pieces[pieceToMove].y
+                newMove["jump"] = False
+
             for i in range(0,numPieces):
 
                 if ((pieces[i].x == jumpMove.x and pieces[i].y == jumpMove.y)
