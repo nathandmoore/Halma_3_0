@@ -482,8 +482,8 @@ function makeMove() {
 
            // check that the move sequence requested is valid
            if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
-               alert("Invalid Move request from AI " +
-                      gTeamList[currentTeam].name + " " + JSON.stringify(move) );
+               alert("Illegal Move request from AI " +
+                      gTeamList[currentTeam].name + " " + JSON.stringify(move)+ ". Penalty will be loss of move" );
                break;  // no need to proceed
            }
 
