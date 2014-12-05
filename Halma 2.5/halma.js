@@ -406,7 +406,7 @@ function initGame(canvasElement, moveCountElement) {
 function startGame() {
     //this is not the function that will repeatedly call makeMove so that the game plays on its own
     setInterval(function(){makeMove()},3000);
-    ('#startGame').hide();
+    $('#startGame').hide();
 
 }
 //
