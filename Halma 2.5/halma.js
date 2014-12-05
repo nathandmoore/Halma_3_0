@@ -404,11 +404,9 @@ function initGame(canvasElement, moveCountElement) {
 }
 
 function startGame() {
-    //this needs to be changed to startGame();
     //this is not the function that will repeatedly call makeMove so that the game plays on its own
     setInterval(function(){makeMove()},3000);
-    var element = document.getElementById("startGame")
-    element.style.display = "none";
+    ('#startGame').hide();
 
 }
 //
@@ -483,7 +481,7 @@ function makeMove() {
            // check that the move sequence requested is valid
            if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
                alert("Illegal Move request from AI " +
-                      gTeamList[currentTeam].name + " " + JSON.stringify(move)+ ". Penalty will be loss of move" );
+                      gTeamList[currentTeam].name + " " + JSON.stringify(move) + ". Penalty will be loss of move" );
                break;  // no need to proceed
            }
 
