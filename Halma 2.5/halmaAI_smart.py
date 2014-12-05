@@ -237,6 +237,21 @@ def setPieces(pieces):
     return piecesAsCells
 
 
+def testSetPieces():
+
+
+    stringJSON = json.loads(generateTestJSON(1))
+    gameData = stringJSON["board"]
+
+    pieces = gameData["pieces"]
+    pieces = setPieces(pieces)
+
+    if pieces[0].x == 1 and pieces[0].y == 1:
+        return True
+    else:
+        return False
+
+
 def setDestinations(dests):
     """ Function: setDestinations
          => Description:
@@ -256,6 +271,21 @@ def setDestinations(dests):
         destsAsCells.append(newDest)
 
     return destsAsCells
+
+
+def testSetDestinations():
+
+
+    stringJSON = json.loads(generateTestJSON(2))
+    gameData = stringJSON["board"]
+
+    destRegion = gameData["destinations"]
+    destRegion = setDestinations(destRegion)
+
+    if destRegion[0].x == 1 and destRegion[0].y == 1:
+        return True
+    else:
+        return False
 
 
 def checkIfArrived(pieces,dests):
@@ -289,40 +319,142 @@ def checkIfArrived(pieces,dests):
                 break
 
 
-# def testCheckIfArrived(pieces)
+def testCheckIfArrived():
 
 
-# def generateTestJSON():
-#     """
-#     Function: generateTestJSON
-#         => Description:
-#             Creates sample JSON input for testing the validity of AI moves
-#         => Parameters:
-#             . none
-#         =>
-#     """
+    stringJSON = json.loads(generateTestJSON(3))
+    gameData = stringJSON["board"]
+    pieces = gameData["pieces"]
+    pieces = setPieces(pieces)
+    destRegion = gameData["destinations"]
+    destRegion = setDestinations(destRegion)
+
+    checkIfArrived(pieces,destRegion)
+
+    if pieces[0].arrived and destRegion[0].arrived:
+        # correctly identifies arrived pieces
+        if pieces[1].arrived or destRegion[1].arrived:
+            # incorrectly identifies pieces that are not arrived as though
+            # they had actually arrived
+            return False
+        else:
+            # correct
+            return True
+    else:
+        # incorrect
+        return False
 
 
-#     stringJSON = {
-#         'board': {
-#             'currPiece': currPiece,
-#             'pieces': [
-#                 {'y': ,'x': },
-#             ],
-#             'destinations': [
-#                 {'y': ,'x': },
-#             ],
-#             'enemy': [
-#                 {'y': ,'x': },
-#             ],
-#             'moveCount': ,
-#         }
-#     }
+def generateTestJSON(testNum):
+    """
+    Function: generateTestJSON
+        => Description:
+            Creates sample JSON input for testing the validity of AI moves
+        => Parameters:
+            . testNum: int determines which JSON to produce depending on test
+        =>
+    """
+
+    stringJSON = None
+
+    if testNum == 1:
+        # test if pieces are set correctly
+        stringJSON = {
+            'board': {
+                'pieces': [
+                    {'y': 1,'x': 1},
+                ],
+            },
+        }
+    elif testNum == 2:
+        # test if destinations are set correctly
+        stringJSON = {
+            'board': {
+                'destinations': [
+                    {'y': 1,'x': 1},
+                ],
+            },
+        }
+    elif testNum == 3:
+        # test if checkIfArrived properly identifies pieces that have arrived
+        # and does not misidentify any
+        stringJSON = {
+            'board': {
+                'pieces': [
+                    {'y': 1,'x': 1},
+                    {'y': 2,'x': 1},
+                ],
+                'destinations': [
+                    {'y': 1,'x': 1},
+                    {'y': 1,'x': 0},
+                ],
+
+            },
+        }
+    else:
+        stringJSON = {
+            "board": {
+                "pieces": [
+                    {"y":7,"x":7,"team":0},
+                    {"y":9,"x":6,"team":0},
+                    {"y":10,"x":6,"team":0},
+                    {"y":11,"x":6,"team":0},
+                    {"y":7,"x":8,"team":0},
+                    {"y":3,"x":13,"team":0},
+                    {"y":2,"x":15,"team":0},
+                    {"y":3,"x":15,"team":0},
+                    {"y":2,"x":14,"team":0},
+                    {"y":3,"x":14,"team":0},
+                    {"y":4,"x":14,"team":0},
+                    {"y":11,"x":8,"team":0}
+                ],
+                "destinations": [
+                    {"y":0,"x":17,"team":-1},
+                    {"y":1,"x":17,"team":-1},
+                    {"y":2,"x":17,"team":-1},
+                    {"y":0,"x":16,"team":-1},
+                    {"y":1,"x":16,"team":-1},
+                    {"y":2,"x":16,"team":-1},
+                    {"y":0,"x":15,"team":-1},
+                    {"y":1,"x":15,"team":-1},
+                    {"y":2,"x":15,"team":-1}
+                ],
+                "boardSize": 18,
+                "enemy": [
+                    {"y":8,"x":9,"team":1},
+                    {"y":9,"x":9,"team":1},
+                    {"y":10,"x":9,"team":1},
+                    {"y":11,"x":9,"team":1},
+                    {"y":8,"x":10,"team":1},
+                    {"y":9,"x":10,"team":1},
+                    {"y":10,"x":10,"team":1},
+                    {"y":11,"x":10,"team":1},
+                    {"y":8,"x":11,"team":1},
+                    {"y":9,"x":11,"team":1},
+                    {"y":10,"x":11,"team":1},
+                    {"y":11,"x":11,"team":1}
+                ],
+                "currPiece": 9,
+                "moveCount": 13,
+            }
+        }
+
+    return json.dumps(stringJSON)
 
 
 #------------------------------------------------------------------------------
-# get data
-
+# TESTS
+# print "1) Testing if setPieces() returns the correct result:"
+# print ">> " + str(testSetPieces())
+# print
+# print "2) Testing if setDestinations() returns the correct result:"
+# print ">> " + str(testSetDestinations())
+# print
+# print """3) Testing if checkIfArrived() correctly identifies when pieces reach
+#     their destinations for both the pieces and the destinations:"""
+# print ">> " + str(testCheckIfArrived())
+#------------------------------------------------------------------------------
+# GET DATA
 postData = cgi.FieldStorage()
 gameData = ast.literal_eval(postData.getvalue('board'))
 
