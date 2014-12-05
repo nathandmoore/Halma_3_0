@@ -223,7 +223,7 @@ function newGame() {
     // set up teams
     var team0 = new Team(0, "lowerLeft", "upperRight", "#CC0099");
     var team1 = new Team(1, "lowerRight", "upperLeft", "#006699");
-
+    team1.teamPieces.reverse();
     gTeamList[0] = team0;
     gTeamList[1] = team1;
 
