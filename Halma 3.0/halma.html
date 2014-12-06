@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- v 1.2 give choice for POST with or without parm (board=jsonstr)
+    -->
+    <!-- URL: http://lyle.smu.edu/~ndmoore/Halma 3.0/halma.html -->
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="robots" content="noindex"/>
+        <title>Halma UI</title>
+        <script src="jquery-2.1.1.js"></script>
+        <script src="halma.js"></script>
+    </head>
+    <body>
+        <div id ="initialization">
+            <h1>Halma 3.0a</h1>
+            <p>Version 3.0 incorporates our python AI and uses a timer.</p>
+            <p>Version 3.0 also is a multi-move Halma game, allowing each team to move all its pieces at once. </p>
+            <ul>
+                <li>Rejects a move request if a team tries to move to a location
+                occupied by either team.</li>
+                <li>Displays an ALERT if the data from the AI is NOT JSON
+                    and displays the  data</li>
+                <li>Displays an ALERT if an AI tries to move a piece not on its team</li>
+                <li>Displays an ALERT if an AI tries to move to a square already occupied</li>
+                <li>Displays all DATA sent to each AI and displays all DATA received
+                     from the AI via console.log which can viewed by getting your browser to
+                     display the Javascript log (how to do this varies from browser to browser)</li>
+            </ul>
+
+            <form id="initForm">
+
+                <!--  radio buttons: replaced with test for .py extension
+                <p>
+                  <input type="radio" name="POSToption" id="NoParm" value="NoParm">Send only JSON (No Parameter)
+                  <input type="radio" name="POSToption" value="YesParm">Send JSON with Parameter board=
+                </p>
+                -->
+
+                <label>Team1 URL:</label>
+                <input style="width: 400px" type="text" id="team1Url" value="http://lyle.smu.edu/~ndmoore/cgi-bin/halmaAI_dumb.py" required />
+                <label>   Team1 Name:</label>
+                <input style="width: 100px" type="text" id="team1Name" value="bozos" required /><br/>
+
+
+                <label>Team2 URL:</label>
+                <input style="width: 400px" type="text" id="team2Url" value="http://lyle.smu.edu/~ndmoore/cgi-bin/halmaAI_smart.py" required />
+                <label>   Team2 Name:</label>
+                <input style="width: 100px" type="text" id="team2Name" value="smarties" required /><br/>
+
+                <input type="button" id="playGame" value="Play!" onclick="checkInputs()" />
+
+                <p style="color: red">*Your AI must be on the same server as this UI<br/>
+                    Begin your URL with http:// <br/>
+                    JSON with boardSize, pieces and destinations will be sent via HTTP POST<br/>
+
+                </p>
+                <p style="color: blue">The JSON from the HalmaUI is sent via HTTP POST.
+                    To obtain the JSON string with PHP use: $jsonStr = file_get_contents("php://input");
+                </p>
+                <br />
+
+
+
+                <input type="submit" id="hiddenSubmit" hidden />
+                <br/>
+
+            </form>
+        </div>
+        <div id ="game">
+            <h4>Halma UI v3.0  <span id="winnerCircle"> </span></h4>
+
+            <p><label>HalmaAI <span id="AITeamName"> </span>: JSON Move Request= </label>
+            <label id="responseString"  style="width:400"> -- json shown here --</label>
+            </p>
+            <p id="moves">Moves: <span id="movecount">0</span>
+                <input type="button" id="startGame" value="Start Game" onclick="startGame()" />
+
+                <input type="button" id="restartGame" value="New Game" onclick="refreshGame()" />
+            </p>
+        </div>
+
+    </body>
+</html>
