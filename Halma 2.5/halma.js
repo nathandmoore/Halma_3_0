@@ -639,6 +639,7 @@ function checkInputs() {
 
 $(document).ready(function() {
     $('#game').hide();
+    $("#restartGame").hide();
     $('#initialization').show();
     $('#NoParm').click();   // default for radio button POST option
 
@@ -703,6 +704,7 @@ function isGameOver() {
             elt.style.fontsize = 102;
             elt.innerHTML =" $$$$$$$$$$$$$$$$  We have a WINNER: " +
                     gTeamList[i].name +  " $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            endGame();
             return true;
          }
 
