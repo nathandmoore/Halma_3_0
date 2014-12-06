@@ -1,21 +1,28 @@
-/* V 2.5
+/* V 3.0
 
  */
 
-var kBoardWidth = 18; //change to 0 to use with Initialization form
-var kBoardHeight = 18; //change to 0 to use with Initialization form
+//change to 0 to use with Initialization form
+var kBoardWidth = 18;
+//change to 0 to use with Initialization form
+var kBoardHeight = 18;
 var kPieceWidth = 20;
 var kPieceHeight = 20;
-var kPixelWidth = 1 + (kBoardWidth * kPieceWidth); // change to 0 to use with initialization form
-var kPixelHeight = 1 + (kBoardHeight * kPieceHeight); // change to 0 to use with initialization form
-var destinationCorner = "upperRight"; //change to "" to use with initialization form
-var piecesCorner = "lowerLeft"; //change to "" to user with initialization form
+// change to 0 to use with initialization form
+var kPixelWidth = 1 + (kBoardWidth * kPieceWidth);
+// change to 0 to use with initialization form
+var kPixelHeight = 1 + (kBoardHeight * kPieceHeight);
+//change to "" to use with initialization form
+var destinationCorner = "upperRight";
+//change to "" to user with initialization form
+var piecesCorner = "lowerLeft";
 
 var gCanvasElement;
 var gDrawingContext;
 var gPattern;
 
-var gPieces = [];  // so we can push and append
+// so we can push and append
+var gPieces = [];
 var gDestinations;
 var gNumDests;
 var gSelectedPieceIndex;
@@ -26,11 +33,13 @@ var gGameInProgress;
 
 
 // v 2.0
-var gTeamList = []; // filled in newGame - array Of Teams
+// filled in newGame - array Of Teams
+var gTeamList = [];
 var gTurnCount = 0;
 var gNumTeams  = 2;
 
-var url = "";  // ??
+// ?? // wait, really? There's a comment that is a double ? in the code??
+var url = "";
 
 function Team(teamIdx, startArea, destArea, color) {
     this.teamIdx = teamIdx;
@@ -40,8 +49,10 @@ function Team(teamIdx, startArea, destArea, color) {
     this.teamPieces = [];
     this.teamDestinations = [];
     this.teamUrl    = '';
-    this.sendPostNoParm = true;  // changed if python AI ends with py
-    this.name = "nonames";       // comes in from HTML
+    // changed if python AI ends with py
+    this.sendPostNoParm = true;
+    // comes in from HTML
+    this.name = "nonames";
     this.badMoveCount = 0;
     this.numberJumps  = 0;
     this.maxJump      = 0;
@@ -50,7 +61,8 @@ function Team(teamIdx, startArea, destArea, color) {
 function Cell(y, x) {
     this.y = y;
     this.x = x;
-    this.team = -1;  // none
+    // none
+    this.team = -1;
     this.toString = function() {
         return  JSON.stringify(this);
     };
@@ -193,13 +205,12 @@ function drawPiece(p, selected) {
 
     // todo: draw cells in destination area differently
     // assume destination areas are upperRight and upperLeft
-
     if ((column < 3 && row < 3) ||
         (column >= kBoardWidth - 3 && row < 3)  )   {
         gDrawingContext.fillStyle = "#00ff00";
         gDrawingContext.fill();
 
-        // draw inner circle?
+        // draw inner circle? //again, what is up with this comment?
     }
 
 }
@@ -409,7 +420,8 @@ function initGame(canvasElement, moveCountElement) {
 }
 
 function startGame() {
-    //this is not the function that will repeatedly call makeMove so that the game plays on its own
+    //this is not the function that will repeatedly call makeMove so that the
+    //game plays on its own
     setInterval(function(){makeMove()},3000);
     $('#startGame').hide();
 
@@ -446,17 +458,17 @@ function makeMove() {
             return;
         }
 
-
         // debug
         console.log("AI move Request: " + JSON.stringify(move));
-
 
         //fc: display incoming json and Team Name
         var teamSpan         = document.getElementById("AITeamName");
         teamSpan.innerHTML   = gTeamList[currentTeam].name;
         teamSpan.style.color = gTeamList[currentTeam].color;
-        //might need to change this to instead append the current move and clear it when the next player goes
-        document.getElementById("responseString").innerHTML = JSON.stringify(move);
+        //might need to change this to instead append the current move and
+        //clear it when the next player goes
+        document.getElementById("responseString").innerHTML =
+            JSON.stringify(move);
 
          // is piece to move on current team? if not exit
          var locPiece = move.from;
@@ -477,7 +489,8 @@ function makeMove() {
             }
 
 
-           // 10.29.14: need temp array since can't pass moves to function w/out values changing
+           // 10.29.14: need temp array since can't pass moves to function
+           // w/out values changing
            var workingMovesArr = [];
            for (var i = 0; i < moves.length; i++) {
                  workingMovesArr[i] = moves[i]; // copy over so can pass it
@@ -485,9 +498,10 @@ function makeMove() {
 
            // check that the move sequence requested is valid
            if (!isValidMoveRequest(currPieceLoc, workingMovesArr, gPieces) ){
-               alert("Illegal Move request from AI " +
-                      gTeamList[currentTeam].name + " " + JSON.stringify(move) + ". Penalty will be loss of move" );
-               break;  // no need to proceed
+                alert("Illegal Move request from AI " +
+                      gTeamList[currentTeam].name + " " + JSON.stringify(move)
+                      + ". Penalty will be loss of move" );
+                break;  // no need to proceed
            }
 
 
@@ -496,10 +510,12 @@ function makeMove() {
 
             var currentPieceIdx = -1;
             for(var i=0; i< gTeamList[currentTeam].teamPieces.length; i++ ){
-                if (currPieceLoc.x ===  gTeamList[currentTeam].teamPieces[i].x &&
-                     currPieceLoc.y ===  gTeamList[currentTeam].teamPieces[i].y) {
-                  currentPieceIdx = i;
-                  break;
+                if (currPieceLoc.x ===
+                        gTeamList[currentTeam].teamPieces[i].x &&
+                        currPieceLoc.y ===
+                        gTeamList[currentTeam].teamPieces[i].y) {
+                    currentPieceIdx = i;
+                    break;
                 }
             };
 
@@ -510,8 +526,10 @@ function makeMove() {
             }
 
             // update current Piece position to last entry in move request list
-            gTeamList[currentTeam].teamPieces[currentPieceIdx].y = moves[moves.length - 1].y;
-            gTeamList[currentTeam].teamPieces[currentPieceIdx].x = moves[moves.length - 1].x;
+            gTeamList[currentTeam].teamPieces[currentPieceIdx].y =
+                moves[moves.length - 1].y;
+            gTeamList[currentTeam].teamPieces[currentPieceIdx].x =
+                moves[moves.length - 1].x;
         }
         // Draw the board and all the pieces in their team colors
         drawBoard();
@@ -663,7 +681,8 @@ function boardToJSON(teamIdx, pieceToMove) {
 
     // debug via console
     console.log("-------------------------------");
-    console.log("Team: " + gTeamList[teamIdx].name + " URL: " + gTeamList[teamIdx].url);
+    console.log("Team: " + gTeamList[teamIdx].name +
+                " URL: " + gTeamList[teamIdx].url);
     console.log("Data TO AI " + jsonStr);
 
 
@@ -702,8 +721,8 @@ function isGameOver() {
                                       gTeamList[i].teamPieces)) {
             var elt = document.getElementById('winnerCircle');
             elt.style.fontsize = 102;
-            elt.innerHTML =" $$$$$$$$$$$$$$$$  We have a WINNER: " +
-                    gTeamList[i].name +  " $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            elt.innerHTML =" !!!!!WE HAVE A WINNER!!!!! >> " +
+                    gTeamList[i].name +  " << "
             endGame();
             return true;
          }
