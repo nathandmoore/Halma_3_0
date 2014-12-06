@@ -365,6 +365,11 @@ function setUpTeamPieces(piecesCorner) {
 function endGame() {
     gSelectedPieceIndex = -1;
     gGameInProgress = false;
+    $('#restartGame').show();
+}
+
+function refreshGame() {
+    location.reload();
 }
 
 function initGame(canvasElement, moveCountElement) {
